@@ -1,0 +1,43 @@
+<div>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="main_panel">
+      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+        <small *ngIf="form.get('email')?.errors?.['required']">
+          Email is missing
+        </small>
+        <small *ngIf="form.get('email')?.errors?.['invalidEmail'] && !form.get('email')?.errors?.['required']">
+          The email entered is incorrect.
+        </small>
+        <small *ngIf="form.get('email')?.errors?.['restrictedEmail'] && !form.get('email')?.errors?.['required'] && !form.get('email')?.errors?.['invalidEmail']">
+          You entered the email: {{form.get('email')?.value}}, unfortunately, the domain {{ extractDomain(form.get('email')?.value) }} is not supported. Please enter a different one.
+        </small>
+      </div>
+      <label>Email:</label>
+      <input type="email" formControlName="email" placeholder="Email">
+    </div>
+    <div>
+      <div>
+        <small *ngIf="form.controls['password'].invalid">
+          The password must contain at least 8 and no more than 25 characters; currently, {{passwordLength}} characters are entered.
+        </small>
+        <small *ngIf="form.controls['password'].touched && form.controls['password'].value === ''">
+          Password is missing
+        </small>
+      </div>
+      <label>Password:</label>
+      <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Password" (change)="passwordLength" (input)="checkPasswordStrength()">
+      <button type="button" (click)="togglePasswordVisibility()">
+        {{ showPassword ? 'Hide password' : 'Show password' }}
+      </button>
+      <div class="strength_meter">
+        <div *ngFor="let strength of passwordStrength; let i = index"
+             [ngClass]="strength">
+        </div>
+      </div>
+      <span>{{passwordStrengthText}}</span>
+    </div>
+
+    <button class="btn" type="submit" [disabled]="form.invalid || form.controls['password'].value === ''">Enter</button>
+  </form>
+</div>
+
